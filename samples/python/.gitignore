@@ -11,6 +11,9 @@ wheels/
 
 .DS_Store
 
+# Environment and secret backup files
 .env
+.env.*
+*.env.backup
 
 **.cache
