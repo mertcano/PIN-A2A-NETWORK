@@ -40,11 +40,17 @@ class ContactInfo(BaseModel):
 )
 def main(host, port, result_type, instructions):
     """Starts the Marvin Contact Extractor Agent server."""
-    try:
-        result_type = eval(result_type)
-    except Exception as e:
-        logger.error(f"Invalid result type: {e}")
-        exit(1)
+    # The previous implementation used eval(result_type), which executed a
+    # CLI-supplied string as Python code. Only the known result types are
+    # permitted now.
+    allowed_result_types = {
+        "ContactInfo": ContactInfo,
+    }
+    if isinstance(result_type, str):
+        if result_type not in allowed_result_types:
+            logger.error(f"Invalid result type: {result_type}")
+            exit(1)
+        result_type = allowed_result_types[result_type]
 
     try:
         capabilities = AgentCapabilities(streaming=True, pushNotifications=True)
